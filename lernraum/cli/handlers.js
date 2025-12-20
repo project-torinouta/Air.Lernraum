@@ -2,7 +2,7 @@ import { intro, outro, text } from "@clack/prompts";
 import { styleText } from "util";
 import { CONTENT_FOLDER, PROFILE_FILE, cwd, version } from "./constants.js";
 import { exitIfCancel, getWeek } from "./helpers.js";
-import { execSync } from "child_process";
+import { exec, execSync } from "child_process";
 import path from "path";
 import fs from "fs";
 
@@ -26,6 +26,10 @@ export async function handleInitialize(argv) {
         },
       }),
     );
+    username = username
+      .replaceAll(" ", "-")
+      .toLowerCase()
+      .trim();
   }
   execSync(`git checkout ${username} || git checkout -b ${username}`, {
     stdio: "ignore"
@@ -52,7 +56,7 @@ export async function handleNewReport(argv) {
   console.log();
   intro(styleText(["bgGreen", "black"], ` Lernraum v${version} `));
   const profilePath = path.join(cwd, PROFILE_FILE);
-  /** @type {{ name: string } | undefined} */
+  /** @type {{ username: string } | undefined} */
   let profile = undefined;
 
   // When there is no file `.profile.json`, exit
@@ -81,4 +85,57 @@ export async function handleNewReport(argv) {
   if (!currentWeek) {
     currentWeek = getWeek();
   }
+
+  const username = profile.username;
+  const branch = `report/${username}-${currentYear}-week-${currentWeek}`;
+  const markdown = `${currentYear}-week-${currentWeek}.md`;
+  const userContentPath = path.join(cwd, CONTENT_FOLDER, username);
+  if (!fs.existsSync(userContentPath) || !fs.lstatSync(userContentPath).isDirectory()) {
+    outro(
+      styleText(
+        "red", 
+        `You should run \`${styleText(
+          "yellow", 
+          "npx lernraum init"
+        )}\` before \`${styleText(
+          "yellow", 
+          "npx lernraum new"
+        )}\``
+      )
+    );
+    process.exit(1);
+  }
+
+  exec(`git checkout ${branch}`, (error) => {
+    if (error) {
+      execSync(`git stash; git checkout -b ${branch}; git stash pop`, {
+        stdio: "ignore"
+      });
+    } else {
+      outro(
+        styleText(
+          "red",
+          `You have created a weekly report this week, please edit the existing report.`
+        )
+      );
+      process.exit(1);
+    }
+    // If there is no branch <username>/<year>-week-<week>, then create a branch
+    // named after it.
+  });
+
+  await fs.promises.writeFile(
+    path.join(userContentPath, markdown),
+    `---
+title: ${currentYear} Week ${currentWeek} Report
+author: ${username}
+date: ${currentYear}-${new Date().getMonth() + 1}-${new Date().getDate()}
+---
+`
+  );
+
+  outro(`You have successfully created a new weekly report at ${path.join(userContentPath, markdown)}, now you can
+  • Edit weekly report freely, notice not to break the yaml header ~
+  • Scan your brain to memory what have you done this week ~ Have a nice day !`);
+
 }
