@@ -1,0 +1,29 @@
+{
+  "name": "air.lernraum",
+  "version": "1.0.0",
+  "description": "🐦 Lernraum is a repo for storing weekly reports of organization members",
+  "keywords": [
+    "weekly-reports",
+    "cli"
+  ],
+  "homepage": "https://github.com/project-torinouta/Air.Lernraum#readme",
+  "bugs": {
+    "url": "https://github.com/project-torinouta/Air.Lernraum/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/project-torinouta/Air.Lernraum.git"
+  },
+  "license": "MIT",
+  "author": "ashgrey",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "lernraum": "./lernraum/bootstrap-cli.mjs",
+    "test": "tsx --test"
+  },
+  "dependencies": {
+    "@clack/prompts": "^0.11.0",
+    "yargs": "^18.0.0"
+  }
+}
