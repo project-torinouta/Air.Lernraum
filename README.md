@@ -16,4 +16,7 @@ and use [Quartz](https://github.com/jackyzha0/quartz) to deploy.
   ```
 
 3. Run `npm install` to resolve dependencies.
-4. Run `npx lernraum init` and type your name.
+4. Run `npx lernraum init` and type your name. This command will create a new
+  branch named `<username>` where `<username>` is the name you typed. It will
+  also crate a new directory named `<username>` under `content` and dump the
+  username into `.profile.json`.

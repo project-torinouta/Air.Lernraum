@@ -1,6 +1,6 @@
 import { intro, text } from "@clack/prompts";
 import { styleText } from "util";
-import { CONTENT_FOLDER, cwd, version } from "./constants.js";
+import { CONTENT_FOLDER, PROFILE_FILE, cwd, version } from "./constants.js";
 import { exitIfCancel } from "./helpers.js";
 import { execSync } from "child_process";
 import path from "path";
@@ -37,4 +37,8 @@ export async function handleInitialize(argv) {
   }
   const usernamePath = path.join(cwd, CONTENT_FOLDER, username);
   await fs.promises.mkdir(usernamePath);
+
+  const profile = { username: username };
+  const profilePath = path.join(cwd, PROFILE_FILE);
+  await fs.promises.writeFile(profilePath, JSON.stringify(profile));
 }
