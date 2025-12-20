@@ -6,6 +6,9 @@
     "weekly-reports",
     "cli"
   ],
+  "bin": {
+    "lernraum": "./lernraum/bootstrap-cli.mjs"
+  },
   "homepage": "https://github.com/project-torinouta/Air.Lernraum#readme",
   "bugs": {
     "url": "https://github.com/project-torinouta/Air.Lernraum/issues"
