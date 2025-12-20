@@ -20,3 +20,6 @@ and use [Quartz](https://github.com/jackyzha0/quartz) to deploy.
   branch named `<username>` where `<username>` is the name you typed. It will
   also crate a new directory named `<username>` under `content` and dump the
   username into `.profile.json`.
+5. Once step 4 is executed, you can run `npx lernraum new` to create a new
+  weekly report in a new branch. Then you can edit it, write your own weekly
+  report!

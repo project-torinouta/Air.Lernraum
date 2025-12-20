@@ -1,12 +1,13 @@
-import { intro, text } from "@clack/prompts";
+import { intro, outro, text } from "@clack/prompts";
 import { styleText } from "util";
 import { CONTENT_FOLDER, PROFILE_FILE, cwd, version } from "./constants.js";
-import { exitIfCancel } from "./helpers.js";
+import { exitIfCancel, getWeek } from "./helpers.js";
 import { execSync } from "child_process";
 import path from "path";
 import fs from "fs";
 
 /**
+ * Handles command `npx lernraum init`
  * @param {import("./args.js").InitializeArgvInterface} argv
  */
 export async function handleInitialize(argv) {
@@ -41,4 +42,43 @@ export async function handleInitialize(argv) {
   const profile = { username: username };
   const profilePath = path.join(cwd, PROFILE_FILE);
   await fs.promises.writeFile(profilePath, JSON.stringify(profile));
+}
+
+/**
+ * Handles command `npx lernraum new`
+ * @param {import("./args.js").NewReportArgvInterface} argv
+ */
+export async function handleNewReport(argv) {
+  console.log();
+  intro(styleText(["bgGreen", "black"], ` Lernraum v${version} `));
+  const profilePath = path.join(cwd, PROFILE_FILE);
+  /** @type {{ name: string } | undefined} */
+  let profile = undefined;
+
+  // When there is no file `.profile.json`, exit
+  if (fs.existsSync(profilePath)) {
+    profile = JSON.parse(fs.readFileSync(profilePath).toString());
+  } else {
+    outro(
+      styleText(
+        "red", 
+        `You should run \`${styleText(
+          "yellow", 
+          "npx lernraum init"
+        )}\` before \`${styleText(
+          "yellow", 
+          "npx lernraum new"
+        )}\``
+      )
+    );
+    process.exit(1);
+  }
+  let currentYear = argv.year;
+  if (!currentYear) {
+    currentYear = new Date().getFullYear();
+  }
+  let currentWeek = argv.week;
+  if (!currentWeek) {
+    currentWeek = getWeek();
+  }
 }

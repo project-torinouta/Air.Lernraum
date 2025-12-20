@@ -16,3 +16,15 @@ export function exitIfCancel(val) {
     return val;
   }
 }
+
+/**
+ * Get current week of given date
+ * @param {Date} [date=new Date()]
+ * @returns {number}
+ */
+export function getWeek(date = new Date()) {
+  const yearStart = new Date(date.getFullYear(), 0, 1);
+  const daysDiff = Math.floor((date - yearStart) / (86400 * 1000));
+  const firstDayWeek = yearStart.getDay();
+  return Math.ceil((daysDiff + firstDayWeek + 1) / 7);
+}
