@@ -2,7 +2,7 @@ import { intro, outro, text } from "@clack/prompts";
 import { styleText } from "util";
 import { CONTENT_FOLDER, PROFILE_FILE, cwd, version } from "./constants.js";
 import { exitIfCancel, getWeek } from "./helpers.js";
-import { exec, execSync } from "child_process";
+import { execSync } from "child_process";
 import path from "path";
 import fs from "fs";
 
@@ -87,9 +87,9 @@ export async function handleNewReport(argv) {
   }
 
   const username = profile.username;
-  const branch = `report/${username}-${currentYear}-week-${currentWeek}`;
   const markdown = `${currentYear}-week-${currentWeek}.md`;
   const userContentPath = path.join(cwd, CONTENT_FOLDER, username);
+  const markdownPath = path.join(userContentPath, markdown);
   if (!fs.existsSync(userContentPath) || !fs.lstatSync(userContentPath).isDirectory()) {
     outro(
       styleText(
@@ -106,36 +106,27 @@ export async function handleNewReport(argv) {
     process.exit(1);
   }
 
-  exec(`git checkout ${branch}`, (error) => {
-    if (error) {
-      execSync(`git stash; git checkout -b ${branch}; git stash pop`, {
-        stdio: "ignore"
-      });
-    } else {
-      outro(
-        styleText(
-          "red",
-          `You have created a weekly report this week, please edit the existing report.`
-        )
-      );
-      process.exit(1);
-    }
-    // If there is no branch <username>/<year>-week-<week>, then create a branch
-    // named after it.
-  });
-
-  await fs.promises.writeFile(
-    path.join(userContentPath, markdown),
-    `---
+  if (!fs.existsSync(markdownPath)) {
+    await fs.promises.writeFile(
+      markdownPath
+      `---
 title: ${currentYear} Week ${currentWeek} Report
 author: ${username}
 date: ${currentYear}-${new Date().getMonth() + 1}-${new Date().getDate()}
 ---
 `
-  );
+    );
+  } else {
+    outro(
+      styleText(
+        "red",
+        `You have created a weekly report this week, please edit the existing report.`
+      )
+    );
+    process.exit(1);
+  }
 
   outro(`You have successfully created a new weekly report at ${path.join(userContentPath, markdown)}, now you can
   • Edit weekly report freely, notice not to break the yaml header ~
   • Scan your brain to memory what have you done this week ~ Have a nice day !`);
-
 }
