@@ -29,3 +29,13 @@ export const NewReportArgv = {
     describe: "week of created time of new weekly report",
   }
 };
+
+/**
+ * @typedef {object} PushArgvInterface
+ * @property {number} [year]
+ * @property {number} [week]
+ */
+
+export const PushArgv = {
+  ...NewReportArgv,
+}

@@ -2,7 +2,7 @@ import { intro, outro, text } from "@clack/prompts";
 import { styleText } from "util";
 import { CONTENT_FOLDER, PROFILE_FILE, cwd, version } from "./constants.js";
 import { exitIfCancel, getWeek } from "./helpers.js";
-import { execSync } from "child_process";
+import { exec, execSync } from "child_process";
 import path from "path";
 import fs from "fs";
 
@@ -31,7 +31,7 @@ export async function handleInitialize(argv) {
       .toLowerCase()
       .trim();
   }
-  execSync(`git checkout ${username} || git checkout -b ${username}`, {
+  execSync(`git checkout ${username} || git checkout -b ${username}; git push --set-upstream origin ${username}`, {
     stdio: "ignore"
   });
 
@@ -129,4 +129,79 @@ date: ${currentYear}-${new Date().getMonth() + 1}-${new Date().getDate()}
   outro(`You have successfully created a new weekly report at ${path.join(userContentPath, markdown)}, now you can
   • Edit weekly report freely, notice not to break the yaml header ~
   • Scan your brain to memory what have you done this week ~ Have a nice day !`);
+}
+
+/**
+ * @param {import("./args.js").PushArgvInterface} argv
+ */
+export async function handlePush(argv) {
+  console.log();
+  intro(styleText(["bgGreen", "black"], ` Lernraum v${version} `));
+  const profilePath = path.join(cwd, PROFILE_FILE);
+  /** @type {{ username: string } | undefined} */
+  let profile = undefined;
+
+  // When there is no file `.profile.json`, exit
+  if (fs.existsSync(profilePath)) {
+    profile = JSON.parse(fs.readFileSync(profilePath).toString());
+  } else {
+    outro(
+      styleText(
+        "red", 
+        `You should run \`${styleText(
+          "yellow", 
+          "npx lernraum init"
+        )}\` before \`${styleText(
+          "yellow", 
+          "npx lernraum new"
+        )}\``
+      )
+    );
+    process.exit(1);
+  }
+  const username = profile.username;
+  let currentYear = argv.year;
+  let currentWeek = argv.week;
+
+  if (!currentYear && !currentWeek) {
+    currentYear = new Date().getFullYear();
+    currentWeek = getWeek();
+    exec(
+      `git add .; git commit -m ":bird: report(${username}): update week ${currentWeek} report of ${currentYear}; git push`,
+      (error) => {
+        if (error) {
+          outro(
+            styleText(
+              "red",
+              "There may be some network error while executing `git push`"
+            ),
+          );
+        }
+        process.exit(1);
+      }
+    );
+  } else if (currentYear && currentWeek) {
+    exec(
+      `git add .; git commit -m ":bird: report(${username}): update week ${currentWeek} report of ${currentYear}; git push`,
+      (error) => {
+        if (error) {
+          outro(
+            styleText(
+              "red",
+              "There may be some network error while executing `git push`"
+            ),
+          );
+        }
+        process.exit(1);
+      }
+    );
+  } else {
+    outro(
+      styleText(
+        "red",
+        "You should pass arguments `--year` (aka `-y`) and `--week` (aka `-w`) together or neither"
+      ),
+    );
+    process.exit(1);
+  }
 }
