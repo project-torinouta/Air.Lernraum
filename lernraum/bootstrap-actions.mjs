@@ -48,6 +48,7 @@ function main() {
     const currentWeek = /^(\d+)-week-(\d+)\.md$/.exec(report)[2];
     mergedContent = `---
 title: Week report ${currentWeek} of ${currentYear}
+---
 ` + mergedContent;
     fs.writeFileSync(path.join(targetPath, report), mergedContent);
   }
