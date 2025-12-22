@@ -40,13 +40,13 @@ function main() {
       if (fs.existsSync(reportFullPath)) {
         const content = fs.readFileSync(reportFullPath).toString();
         mergedContent += 
-          `# ${folder.slice(folder.lastIndexOf("/"))}'s report\n\n` +
-          content.replace(/^---\s*\n([\s\S]*?)\n---\s*$/, "").trim() +
+          `# ${folder.slice(folder.lastIndexOf("/") + 1)}'s report\n\n` +
+          content.replace(/^---\s*\n[\s\S]*?\n---\s*\n/, "").trim() +
           "\n\n";
         // Remove yaml header
       } else {
         mergedContent +=
-          `# ${folder.slice(folder.lastIndexOf("/"))}'s report\n\n` +
+          `# ${folder.slice(folder.lastIndexOf("/") + 1)}'s report\n\n` +
           "*No Content Provided*\n\n";
       }
     }
