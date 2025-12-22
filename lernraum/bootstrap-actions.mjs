@@ -10,10 +10,12 @@ function main() {
   /** @type {string[]} */
   const folders = [];
 
-  fs.cpSync(
-    path.join(cwd, "README.md"),
-    path.join(targetPath, "index.md")
-  );
+  const indexContent = `---
+title: Welcome to 🐦 Lernraum !
+---\n
+` + fs.readFileSync(path.join(cwd, "README.md"));
+
+  fs.writeFileSync(path.join(targetPath, "index.md"), indexContent);
 
   for (const sub of subs) {
     const fp = path.join(contentPath, sub);

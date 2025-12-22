@@ -1,7 +1,3 @@
----
-title: Welcome to 🐦 Lernraum !
----
-
 ## 🐦 What is Lernraum
 
 Lernraum is a simple repository for storing weekly reports of project participants
