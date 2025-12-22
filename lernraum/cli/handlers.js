@@ -31,7 +31,11 @@ export async function handleInitialize(argv) {
       .toLowerCase()
       .trim();
   }
-  execSync(`git checkout ${username} || git checkout -B ${username} template; git push --set-upstream origin ${username}`, {
+  execSync(`
+    git checkout ${username}
+    git checkout -B ${username} template
+    git merge template
+    git push --set-upstream origin ${username}`, {
     stdio: "inherit"
   });
 
