@@ -9,6 +9,14 @@ function main() {
   const subs = fs.readdirSync(contentPath);
   /** @type {string[]} */
   const folders = [];
+
+  const indexContent = `---
+title: Welcome to 🐦 Lernraum !
+---\n
+` + fs.readFileSync(path.join(cwd, "README.md"));
+
+  fs.writeFileSync(path.join(targetPath, "index.md"), indexContent);
+
   for (const sub of subs) {
     const fp = path.join(contentPath, sub);
     if (fs.statSync(fp).isDirectory()) folders.push(fp);
@@ -34,20 +42,20 @@ function main() {
       if (fs.existsSync(reportFullPath)) {
         const content = fs.readFileSync(reportFullPath).toString();
         mergedContent += 
-          `# ${folder.slice(folder.lastIndexOf("/"))}'s report\n\n` +
-          content.replace(/^---\s*\n([\s\S]*?)\n---\s*$/, "").trim() +
+          `# ${folder.slice(folder.lastIndexOf("/") + 1)}'s report\n\n` +
+          content.replace(/^---\s*\n[\s\S]*?\n---\s*\n/, "").trim() +
           "\n\n";
         // Remove yaml header
       } else {
         mergedContent +=
-          `# ${folder.slice(folder.lastIndexOf("/"))}'s report\n\n` +
+          `# ${folder.slice(folder.lastIndexOf("/") + 1)}'s report\n\n` +
           "*No Content Provided*\n\n";
       }
     }
     const currentYear = /^(\d+)-week-(\d+)\.md$/.exec(report)[1];
     const currentWeek = /^(\d+)-week-(\d+)\.md$/.exec(report)[2];
     mergedContent = `---
-title: Week report ${currentWeek} of ${currentYear}
+title: ${currentYear} week ${currentWeek} report
 ---
 ` + mergedContent;
     fs.writeFileSync(path.join(targetPath, report), mergedContent);
