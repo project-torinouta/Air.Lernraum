@@ -44,6 +44,12 @@ function main() {
           "*No Content Provided*\n\n";
       }
     }
+    const currentYear = /^(\d+)-week-(\d+)\.md$/.exec(report)[1];
+    const currentWeek = /^(\d+)-week-(\d+)\.md$/.exec(report)[2];
+    mergedContent = `---
+title: Week report ${currentWeek} of ${currentYear}
+---
+` + mergedContent;
     fs.writeFileSync(path.join(targetPath, report), mergedContent);
   }
 }
