@@ -9,6 +9,12 @@ function main() {
   const subs = fs.readdirSync(contentPath);
   /** @type {string[]} */
   const folders = [];
+
+  fs.cpSync(
+    path.join(cwd, "README.md"),
+    path.join(targetPath, "index.md")
+  );
+
   for (const sub of subs) {
     const fp = path.join(contentPath, sub);
     if (fs.statSync(fp).isDirectory()) folders.push(fp);
