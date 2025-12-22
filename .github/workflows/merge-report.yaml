@@ -1,0 +1,51 @@
+name: Merge Different Members' Report and Deploy
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages-weekly-reports"
+  cancel-in-progress: false
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Prepare Quartz
+        run: git clone https://github.com/jackyzha0/quartz
+      - name: Install Dependencies
+        working-directory: quartz/
+        run: npm ci
+      - name: Merge Reports
+        run: ./lernraum/bootstrap-actions.mjs
+      - name: Build Quartz
+        working-directory: quartz/
+        run: npx quartz build
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: quartz/public
+
+
+  deploy:
+    needs: merge
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

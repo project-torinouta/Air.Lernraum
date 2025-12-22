@@ -3,7 +3,7 @@ import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 import { version } from "./cli/constants.js";
 import { InitializeArgv, NewReportArgv, PushArgv } from "./cli/args.js";
-import { handleInitialize, handleNewReport } from "./cli/handlers.js";
+import { handleInitialize, handleNewReport, handlePush } from "./cli/handlers.js";
 
 yargs(hideBin(process.argv))
   .scriptName("lernraum")
@@ -15,7 +15,7 @@ yargs(hideBin(process.argv))
     await handleNewReport(argv);
   })
   .command("push", "Push your weekly report to the repo", PushArgv, async (argv) => {
-
+    await handlePush(argv);
   })
   .showHelpOnFail(false)
   .help()
