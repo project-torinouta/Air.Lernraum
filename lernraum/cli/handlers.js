@@ -108,7 +108,7 @@ export async function handleNewReport(argv) {
 
   if (!fs.existsSync(markdownPath)) {
     await fs.promises.writeFile(
-      markdownPath
+      markdownPath,
       `---
 title: ${currentYear} Week ${currentWeek} Report
 author: ${username}
