@@ -31,8 +31,8 @@ export async function handleInitialize(argv) {
       .toLowerCase()
       .trim();
   }
-  execSync(`git checkout ${username} || git checkout -b ${username}; git push --set-upstream origin ${username}`, {
-    stdio: "ignore"
+  execSync(`git checkout ${username} || git checkout -B ${username} template; git push --set-upstream origin ${username}`, {
+    stdio: "inherit"
   });
 
   // Remove gitkeep and make a new username directory
