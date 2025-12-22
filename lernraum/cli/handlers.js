@@ -171,7 +171,7 @@ export async function handlePush(argv) {
     currentYear = new Date().getFullYear();
     currentWeek = getWeek();
     exec(
-      `git add .; git commit -m ":bird: report(${username}): update week ${currentWeek} report of ${currentYear}; git push`,
+      `git add .; git commit -m ":bird: report(${username}): update week ${currentWeek} report of ${currentYear}"; git push`,
       (error) => {
         if (error) {
           outro(
@@ -186,7 +186,7 @@ export async function handlePush(argv) {
     );
   } else if (currentYear && currentWeek) {
     exec(
-      `git add .; git commit -m ":bird: report(${username}): update week ${currentWeek} report of ${currentYear}; git push`,
+      `git add .; git commit -m ":bird: report(${username}): update week ${currentWeek} report of ${currentYear}"; git push`,
       (error) => {
         if (error) {
           outro(
